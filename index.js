@@ -1,10 +1,10 @@
 (function () {
-  // access movie index api
+  //access movie index api
   const BASE_URL = 'https://movie-list.alphacamp.io'
   const INDEX_URL = BASE_URL + '/api/v1/movies/'
   const POSTER_URL = BASE_URL + '/posters/'
+  //create a container for API data
   const data = []
-  const dataGenre = []
   const genres = {
     "1": "Action",
     "2": "Adventure",
@@ -32,35 +32,10 @@
 
   displayGenreList(genres)
 
-  //get movies from API; "data" becomes array of object (each object is a movie)
-  axios
-    .get(INDEX_URL)
-    .then((response) => {
-      data.push(...response.data.results)
-      displayDataList(data)
-    })
-    .catch((err) => console.log(err))
-
-  genreList.addEventListener('click', event => {
-    // console.log('click')
-    // console.log(event.target)
-    let genreID = event.target.dataset.id
-    // console.log(genreID)
-
-    //can print out corectly after clicking the first genre
-    //but don't know how to clean the previous genres when moving on the next genre
-    data.forEach(function (item, index) {
-      if (item.genres.includes(Number(genreID))) {
-        console.log(item)
-        dataGenre.push(item)
-      }
-    })
-    displayDataList(dataGenre)
-  })
-
   //display movies one by one; add labels name
   function displayDataList(data) {
     let htmlContent = ''
+    //forEach 是這幾個陣列函式最單純的一個，不會額外回傳值，只單純執行每個陣列內的物件或值。
     data.forEach(function (item, index) {
       htmlContent += `
         <div class="card mb-2 col-sm-3">
@@ -86,4 +61,25 @@
     }
     genreList.innerHTML = navHtml
   }
+
+  //get movies from API; "data" becomes array of object (each object is a movie)
+  axios
+    .get(INDEX_URL)
+    .then((response) => {
+      data.push(...response.data.results)
+      displayDataList(data)
+    })
+    .catch((err) => console.log(err))
+
+  genreList.addEventListener('click', event => {
+    // console.log('click')
+    // console.log(event.target)
+    let genreID = event.target.dataset.id
+    // console.log(genreID)
+    //create a container for data with right labels
+    let dataGenre = []
+    //filter() 會回傳一個陣列，其條件是 return 後方為 true 的物件
+    dataGenre = data.filter(item => item.genres.includes(Number(genreID)))
+    displayDataList(dataGenre)
+  })
 })()
